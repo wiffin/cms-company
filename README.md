@@ -20,6 +20,8 @@ install mysql2, inquirer, console.table then node server.js in the terminal, tad
 ## Usage
 
 
+https://user-images.githubusercontent.com/92942302/153781884-f1402e37-2ae8-464a-8539-a8a52e103ff0.mp4
+
 
 ## License
 
