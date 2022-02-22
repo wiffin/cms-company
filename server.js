@@ -76,6 +76,55 @@ function createEmployee() {
     })
 }
 
+function updateEmployee() {
+    //WHEN I choose to update an employee role
+    //THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+    const employees = 'SELECT * FROM employee'
+    db.promise().query(employees)
+    .then(([rows]) => {
+        let employees = rows
+
+        const employeeChoices = employees.map(({id, first_name, last_name}) => ({
+            value: id,
+            name: `${first_name} ${last_name}`
+        }));
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'updateEmployee',
+                message: 'Who would you like to update?',
+                choices: employeeChoices
+            }
+        ])
+        .then(res => {
+            console.log('id: ', res)
+            let query = `SELECT * FROM employee WHERE id = ${res.updateEmployee}`
+            db.promise().query(query)
+            .then(([rows]) => {
+                inquirer.prompt([
+                    {
+                        type: 'number',
+                        name: 'newEmployeeRole',
+                        message: 'What is their new role ID?'
+                    },
+                    {
+                        type: 'number',
+                        name: 'newManager',
+                        message: 'What is their new managers ID?'
+                    }
+                ])
+                .then(({newEmployeeRole, newManager}) => {
+                    let query = `UPDATE employee SET emp_role_id = ${newEmployeeRole} and manager_id = ${newManager} WHERE id = ${res.updateEmployee}`
+                    return db.promise().query(query).then(([rows, feilds]) => {
+                        nextQuestion()
+                    });
+                })
+            })
+        })
+    })
+}
+
 function startQuestion() {
     inquirer.prompt([
         {
@@ -152,6 +201,7 @@ function startQuestion() {
                 break;
             case 'update employee role':
                 updateEmployee()
+                break;
             case 'exit':
                 console.log('goodbye')
                 process.exit()
